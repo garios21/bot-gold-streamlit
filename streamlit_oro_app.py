@@ -52,7 +52,10 @@ else:
             else:
                 st.warning("⏸️ Recomendación: ESPERA. No hay una señal clara aún.")
 
-            st.line_chart(data[['Close', 'EMA20', 'EMA50']].tail(100))
+            try:
+                st.line_chart(data[['Close', 'EMA20', 'EMA50']].dropna().tail(100))
+            except Exception as graph_error:
+                st.warning(f"⚠️ No se pudo mostrar el gráfico: {graph_error}")
 
         except Exception as e:
             st.error(f"❌ Error al procesar los datos: {e}")
