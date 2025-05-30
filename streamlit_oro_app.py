@@ -33,20 +33,28 @@ else:
     if not data.empty:
         last = data.iloc[-1]
 
-        st.metric("💰 Precio Actual del Oro", f"${last['Close']:.2f}")
-        st.write(f"**EMA 20:** ${last['EMA20']:.2f}")
-        st.write(f"**EMA 50:** ${last['EMA50']:.2f}")
-        st.write(f"**RSI:** {last['RSI']:.2f}")
+        try:
+            precio = float(last['Close'])
+            ema20 = float(last['EMA20'])
+            ema50 = float(last['EMA50'])
+            rsi = float(last['RSI'])
 
-        # Lógica de recomendación
-        if last['Close'] > last['EMA20'] > last['EMA50'] and last['RSI'] < 70:
-            st.success("✅ Recomendación: Considera ENTRAR en LONG (compra).")
-        elif last['Close'] < last['EMA20'] < last['EMA50'] and last['RSI'] > 30:
-            st.success("✅ Recomendación: Considera ENTRAR en SHORT (venta).")
-        else:
-            st.warning("⏸️ Recomendación: ESPERA. No hay una señal clara aún.")
+            st.metric("💰 Precio Actual del Oro", f"${precio:.2f}")
+            st.write(f"**EMA 20:** ${ema20:.2f}")
+            st.write(f"**EMA 50:** ${ema50:.2f}")
+            st.write(f"**RSI:** {rsi:.2f}")
 
-        # Mostrar gráfico
-        st.line_chart(data[['Close', 'EMA20', 'EMA50']].tail(100))
+            # Lógica de recomendación
+            if precio > ema20 > ema50 and rsi < 70:
+                st.success("✅ Recomendación: Considera ENTRAR en LONG (compra).")
+            elif precio < ema20 < ema50 and rsi > 30:
+                st.success("✅ Recomendación: Considera ENTRAR en SHORT (venta).")
+            else:
+                st.warning("⏸️ Recomendación: ESPERA. No hay una señal clara aún.")
+
+            st.line_chart(data[['Close', 'EMA20', 'EMA50']].tail(100))
+
+        except Exception as e:
+            st.error(f"❌ Error al procesar los datos: {e}")
     else:
         st.warning("⚠️ No hay suficientes datos limpios para el análisis. Intenta más tarde.")
