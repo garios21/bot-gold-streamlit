@@ -32,6 +32,7 @@ else:
 
     if not data.empty:
         last = data.iloc[-1]
+        last_time = data.index[-1].strftime('%Y-%m-%d %H:%M UTC')
 
         try:
             precio = float(last['Close'])
@@ -40,6 +41,7 @@ else:
             rsi = float(last['RSI'])
 
             st.metric("💰 Precio Actual del Oro", f"${precio:.2f}")
+            st.write(f"**Último dato disponible:** {last_time}")
             st.write(f"**EMA 20:** ${ema20:.2f}")
             st.write(f"**EMA 50:** ${ema50:.2f}")
             st.write(f"**RSI:** {rsi:.2f}")
@@ -51,11 +53,6 @@ else:
                 st.success("✅ Recomendación: Considera ENTRAR en SHORT (venta).")
             else:
                 st.warning("⏸️ Recomendación: ESPERA. No hay una señal clara aún.")
-
-            try:
-                st.line_chart(data[['Close', 'EMA20', 'EMA50']].dropna().tail(100))
-            except Exception as graph_error:
-                st.warning(f"⚠️ No se pudo mostrar el gráfico: {graph_error}")
 
         except Exception as e:
             st.error(f"❌ Error al procesar los datos: {e}")
