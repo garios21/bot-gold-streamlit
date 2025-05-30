@@ -2,7 +2,6 @@
 import streamlit as st
 import yfinance as yf
 import pandas as pd
-import numpy as np
 
 # Configuración de la página
 st.set_page_config(page_title="Oro - Recomendación de Inversión", layout="centered")
@@ -21,10 +20,10 @@ else:
     data['EMA50'] = data['Close'].ewm(span=50, adjust=False).mean()
 
     delta = data['Close'].diff()
-    gain = np.where(delta > 0, delta, 0)
-    loss = np.where(delta < 0, -delta, 0)
-    avg_gain = pd.Series(gain).rolling(window=14).mean()
-    avg_loss = pd.Series(loss).rolling(window=14).mean()
+    gain = delta.where(delta > 0, 0)
+    loss = -delta.where(delta < 0, 0)
+    avg_gain = gain.rolling(window=14).mean()
+    avg_loss = loss.rolling(window=14).mean()
     rs = avg_gain / avg_loss
     data['RSI'] = 100 - (100 / (1 + rs))
 
